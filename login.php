@@ -28,22 +28,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $row = mysqli_fetch_array($result);
     // If no user found with the given email
     if (!$row) {
-        $login_error = "Email is not valid";  // Email doesn't exist
+        $login_error = "Email is not valid";   // Email doesn't exist
     } else {
-        // If user is found, check if the password matches
-        if ($row['password'] === $password) {
+        // If user is found, check if the password matches the hash
+        if (password_verify($password, $row['password'])) {
             // Store user data in session variables
             $_SESSION['user_id'] = $row['id'];
-            $_SESSION['email'] = $row['email'];  // Assuming you have an 'email' field
-            $_SESSION['password'] = $row['password'];  // Assuming you have an 'password' field
+            $_SESSION['email'] = $row['email'];   // Assuming you have an 'email' field
             $_SESSION['usertype'] = $row['usertype'];
             // Check user type and set redirect URL
             if ($row["usertype"] == "") {
                 $login_success = true;
-                $redirect_url = "profile.php";  // Redirect to profile page for regular users
+                $redirect_url = "profile.php";   // Redirect to profile page for regular users
             } elseif ($row["usertype"] == "admin") {
                 $login_success = true;
-                $redirect_url = "adminprofile.php";  // Redirect to dashboard for admins
+                $redirect_url = "adminprofile.php";   // Redirect to dashboard for admins
             }
         } else {
             // Password doesn't match
@@ -52,8 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     // Redirect if login is successful
     if ($login_success) {
-        header("Location: " . $redirect_url);  // Redirect to the correct page
-        exit();  // Always call exit after header to stop further script execution
+        header("Location: " . $redirect_url);   // Redirect to the correct page
+        exit();   // Always call exit after header to stop further script execution
     }
 }
 ?>
@@ -127,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body class="form1">
     <nav>
         <div class="nav-left">
-            
+
             <li><a style="text-decoration: none;" href="homepage.php">Home</a></li>
             <li><a style="text-decoration: none;" href="aboutus.php">About Us</a></li>
             <li><a style="text-decoration: none;" href="services.php">Our Services</a></li>
@@ -135,16 +134,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href="#" onclick="location.reload()"><img src="IMAGES/logo.jpg" alt="logo" style="height: 40px;"></a>
         </div>
         <div class="container">
-        <?php if (!isset($_SESSION['user_id'])): ?> <!-- Check if user is not logged in -->
-                <button class="btn" onclick="showLogin()">Login</button>
+        <?php if (!isset($_SESSION['user_id'])): ?> <button class="btn" onclick="showLogin()">Login</button>
                 <button class="btn" onclick="showRegister()">Register</button>
-            <?php else: ?> <!-- If logged in, hide the buttons -->
-                <span>Welcome, <?php echo htmlspecialchars($_SESSION['email']); ?></span> 
-                <a href="logout.php">Logout</a> <!-- You can add a logout option here -->
-            <?php endif; ?>
+            <?php else: ?> <span>Welcome, <?php echo htmlspecialchars($_SESSION['email']); ?></span>
+                <a href="logout.php">Logout</a> <?php endif; ?>
         </div>
     </nav>
-    <!-- Login Form -->
     <form action="#" id="loginForm" method="POST">
         <div class="login-form">
             <div class="login">
@@ -158,7 +153,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button type="submit" name="submit">Log In</button>
                 <a href="register.php">No Account?</a>
             </div>
-            <!-- Display Error Message if Login Fails -->
             <?php if (isset($login_error) && $login_error != ''): ?>
                 <div class="error"><?php echo $login_error; ?></div>
             <?php endif; ?>
@@ -166,4 +160,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 </body>
 </html>
-
