@@ -141,13 +141,10 @@ if (isset($_POST["submit"])) {
             <a href="#" onclick="location.reload()"><img src="IMAGES/logo.jpg" alt="logo" style="height: 40px;"></a>
         </div>
         <div class="container">
-        <?php if (!isset($_SESSION['user_id'])): ?> <!-- Check if user is not logged in -->
-                <button class="btn" onclick="showLogin()">Login</button>
+        <?php if (!isset($_SESSION['user_id'])): ?> <button class="btn" onclick="showLogin()">Login</button>
                 <button class="btn" onclick="showRegister()">Register</button>
-            <?php else: ?> <!-- If logged in, hide the buttons -->
-                <span>Welcome, <?php echo htmlspecialchars($_SESSION['email']); ?></span> 
-                <a href="logout.php">Logout</a> <!-- You can add a logout option here -->
-            <?php endif; ?>
+            <?php else: ?> <span>Welcome, <?php echo htmlspecialchars($_SESSION['email']); ?></span>
+                <a href="logout.php">Logout</a> <?php endif; ?>
         </div>
     </nav>
 
